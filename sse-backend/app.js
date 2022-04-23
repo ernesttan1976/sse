@@ -34,6 +34,10 @@ function eventsHandler(request, response, next) {
     id: clientId,
     response,
   };
+  /**
+   * register client's response stream which eventually
+   * will get used to send events to client
+   */
 
   clients.push(newClient);
 
@@ -48,6 +52,7 @@ app.get("/events", eventsHandler);
 // ...
 
 function sendEventsToAllCliets(newMovie) {
+  // use response stream to send events to different clients
   clients.forEach((client) =>
     client.response.write(`data: ${JSON.stringify(newMovie)}\n\n`)
   );
@@ -55,12 +60,15 @@ function sendEventsToAllCliets(newMovie) {
 
 async function addMovie(request, respsonse, next) {
   const newMovie = request.body;
-  newMovie.id = Date.now();
+  newMovie.id = Date.now(); // you can use UUID package to generate unique ids
   movies.push(newMovie);
   respsonse.json(newMovie);
   return sendEventsToAllCliets(newMovie);
 }
-
+/**
+ * Route just to simulate the send events scenario,
+ * In your case it could be DB update or any async operation completion
+ */
 app.post("/movie", addMovie);
 
 app.listen(PORT, () => {
