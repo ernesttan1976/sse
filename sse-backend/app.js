@@ -61,7 +61,7 @@ async function addMovie(request, respsonse, next) {
   return sendEventsToAllCliets(newMovie);
 }
 
-app.post("/fact", addMovie);
+app.post("/movie", addMovie);
 
 app.listen(PORT, () => {
   console.log(`Movies Events service listening at http://localhost:${PORT}`);
