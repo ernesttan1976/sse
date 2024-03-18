@@ -1,16 +1,20 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
 
-const PORT = 3000;
+const PORT = 3001;
 let clients = [];
 let movies = [];
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors({
+  origin : "*",
+}));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.get("/status", (request, response) =>
   response.json({ clients: clients.length })
@@ -68,8 +72,11 @@ async function addMovie(request, response, next) {
   newMovie.id = Date.now(); // you can use UUID package to generate unique ids
   movies.push(newMovie);
   response.json(newMovie);
+  console.log(request.body)
   console.log(`Add Movie ${JSON.stringify(newMovie)}`)
   console.log(`Movies: ${JSON.stringify(movies)}`)
+
+  //either send single newMovie or send the whole array, depends what you want
   sendEventsToAllClients(newMovie)
   return
 }
